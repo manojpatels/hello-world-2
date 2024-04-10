@@ -1,0 +1,22 @@
+  METHOD ii_fins_esr_je_creation_req~journal_entry_bulk_creation_re.
+
+    DATA:
+      lx_ai_application_fault        TYPE REF TO cx_ai_application_fault,
+      lx_fins_standard_message_fault TYPE REF TO cx_fins_standard_message_fault.
+
+*----- AIF Interface Infomation -------------------------------------*
+*---     Namespace  is '/FINAC'                                   ---*
+*---     Interface  is 'JRNLENTRIN'                               ---*
+*---     AIF Action is 'JOURNALENTRYCREATE'                       ---*
+*---     Fucntion Module = 'FINS_AIF_JE_CREATION_REQ_HDLR'        ---*
+*--- Note:Processing logic has been moved to AIF action FM. ---------*
+
+    TRY.
+        /aif/cl_enabler_proxy=>process_message( is_input = input
+                                                iv_exception_classname = 'CX_FINS_STANDARD_MESSAGE_FAULT' ).
+      CATCH cx_ai_application_fault INTO lx_ai_application_fault.
+        lx_fins_standard_message_fault ?= lx_ai_application_fault.
+        RAISE EXCEPTION lx_fins_standard_message_fault.
+    ENDTRY.
+
+  ENDMETHOD.
